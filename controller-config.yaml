@@ -1,0 +1,22 @@
+relay:
+  one: 12
+  two: 16
+  three: 20
+  four: 21
+thSensor:
+  pin: 4
+display:
+  rs: 17
+  e: 27
+  pins: [13, 6, 5, 22]
+  width: 16
+lights:
+  relay: 1
+  onTime: 9:00AM
+  duration: 12h
+fans:
+  relay: 2
+  triggerTempCelsius: 26
+water:
+  lowRange: 400
+metrics:
