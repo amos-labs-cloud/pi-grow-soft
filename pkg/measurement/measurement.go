@@ -55,7 +55,7 @@ func New(opts ...ConfigOpt) (*Service, error) {
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())
 		if err = http.ListenAndServe(":8080", nil); err != nil {
-			log.Error().Msgf("unable to start prometheus endpoint: %w", err)
+			log.Error().Msgf("unable to start prometheus endpoint: %s", err)
 		}
 	}()
 	return &s, nil

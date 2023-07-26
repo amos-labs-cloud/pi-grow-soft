@@ -75,7 +75,7 @@ func (m *MoistureDevice) start() {
 func (m *MoistureDevice) stop() {
 	err := m.closeFunc()
 	if err != nil {
-		log.Error().Msgf("unable to close rpio: %w", err)
+		log.Error().Msgf("unable to close rpio: %s", err)
 	}
 }
 

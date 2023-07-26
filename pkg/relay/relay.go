@@ -40,11 +40,11 @@ func (r *Relay) Name() string {
 func (r *Relay) On() {
 	switch normality := r.Normality; normality {
 	case NormallyOpen:
-		log.Debug().Msgf("setting pin %r to high", uint8(r.Pin.Pin))
+		log.Debug().Msgf("setting pin %+v to high", uint8(r.Pin.Pin))
 		r.Pin.Output()
 		r.Pin.High()
 	case NormallyClosed:
-		log.Debug().Msgf("setting pin %r to low", uint8(r.Pin.Pin))
+		log.Debug().Msgf("setting pin %+v to low", uint8(r.Pin.Pin))
 		r.Pin.Output()
 		r.Pin.Low()
 	default:

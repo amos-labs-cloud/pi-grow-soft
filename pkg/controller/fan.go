@@ -23,7 +23,7 @@ func (c *Service) FanControl() {
 
 	triggerFanTemp := viper.GetInt("fans.triggerTempCelsius")
 	fans := c.Relays.Fans()
-	roundedTemp := int(math.Round(float64(temp)))
+~.	roundedTemp := int(math.Round(float64(temp)))
 	fansOn, err := fans.State()
 	if err != nil {
 		log.Error().Msgf("unable to get fan state: %s", err)
