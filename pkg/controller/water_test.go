@@ -25,7 +25,7 @@ func TestWaterMetrics(t *testing.T) {
 		WithSensorService(sensorService),
 	)
 
-	for {
+	for i := 0; i < 10; i++ {
 		viper.Set("water.lowRange", 300)
 		device.Mock.On("ReadMoisture", mock.Anything).Return(func() float32 {
 			min := float32(1)
@@ -33,7 +33,7 @@ func TestWaterMetrics(t *testing.T) {
 			return min + rand.Float32()*(max-min)
 		}, nil)
 		controller.WaterControl()
-		time.Sleep(10 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 
 }

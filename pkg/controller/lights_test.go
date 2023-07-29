@@ -56,12 +56,12 @@ func TestLightMetricsEmittance(t *testing.T) {
 		WithRelayService(relayService),
 	)
 
-	for {
+	for i := 0; i < 10; i++ {
 		viper.Set("lights.OnTime", "10:00AM")
 		viper.Set("lights.Duration", "3h")
 		device.Mock.On("State").Return(func() (bool, error) { return false, nil })
 		controller.LightsControl()
-		time.Sleep(60 * time.Second)
+		time.Sleep(1 * time.Second)
 		viper.Set("lights.OnTime", "12:00PM")
 		viper.Set("lights.Duration", "3h")
 		controller.LightsControl()

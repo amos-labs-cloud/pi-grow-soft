@@ -37,9 +37,9 @@ func TestFanMetricsEmittance(t *testing.T) {
 		WithRelayService(relayService),
 	)
 
-	for {
+	for i := 0; i < 10; i++ {
 		controller.FanControl()
-		time.Sleep(10 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 
 }
