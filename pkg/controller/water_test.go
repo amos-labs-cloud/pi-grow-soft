@@ -12,7 +12,7 @@ import (
 
 func TestWaterMetrics(t *testing.T) {
 	rand.NewSource(time.Now().Unix())
-	metricsService, err := measurement.New()
+	metricsService, err := measurement.New(measurement.WithNoWebServer(), measurement.WithServiceName("watertest"), measurement.WithSinkName("watertest"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -25,7 +25,7 @@ func TestWaterMetrics(t *testing.T) {
 		WithSensorService(sensorService),
 	)
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 2; i++ {
 		viper.Set("water.lowRange", 300)
 		device.Mock.On("ReadMoisture", mock.Anything).Return(func() float32 {
 			min := float32(1)

@@ -11,9 +11,31 @@ import (
 	"time"
 )
 
+var noWebServer bool
+
 type Service struct {
-	hostname string
+	hostname    string
+	serviceName string
+	sinkName    string
 	*metrics.Metrics
+}
+
+func WithNoWebServer() ConfigOpt {
+	return func(s *Service) {
+		noWebServer = true
+	}
+}
+
+func WithServiceName(serviceName string) ConfigOpt {
+	return func(s *Service) {
+		s.serviceName = serviceName
+	}
+}
+
+func WithSinkName(sinkName string) ConfigOpt {
+	return func(s *Service) {
+		s.sinkName = sinkName
+	}
 }
 
 type ConfigOpt func(*Service)
@@ -29,13 +51,15 @@ func New(opts ...ConfigOpt) (*Service, error) {
 		opt(&s)
 	}
 
-	sink, err := prometheus.NewPrometheusSink()
+	sink, err := prometheus.NewPrometheusSinkFrom(prometheus.PrometheusOpts{
+		Name: s.sinkName,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("unable to create prometheus sink: %w", err)
 	}
 
-	m, err := metrics.NewGlobal(&metrics.Config{
-		ServiceName:          "pi_grow_soft",
+	m, err := metrics.New(&metrics.Config{
+		ServiceName:          s.serviceName,
 		EnableHostname:       true,
 		EnableHostnameLabel:  true,
 		EnableServiceLabel:   true,
@@ -52,11 +76,14 @@ func New(opts ...ConfigOpt) (*Service, error) {
 
 	m.EnableHostnameLabel = true
 	s.Metrics = m
-	go func() {
-		http.Handle("/metrics", promhttp.Handler())
-		if err = http.ListenAndServe(":8080", nil); err != nil {
-			log.Error().Msgf("unable to start prometheus endpoint: %s", err)
-		}
-	}()
+	if !noWebServer {
+		go func() {
+			http.Handle("/metrics", promhttp.Handler())
+			if err = http.ListenAndServe(":8080", nil); err != nil {
+				log.Error().Msgf("unable to start prometheus endpoint: %s", err)
+			}
+		}()
+	}
+
 	return &s, nil
 }

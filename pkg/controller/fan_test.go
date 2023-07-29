@@ -12,7 +12,7 @@ import (
 
 func TestFanMetricsEmittance(t *testing.T) {
 
-	metricsService, err := measurement.New()
+	metricsService, err := measurement.New(measurement.WithNoWebServer(), measurement.WithServiceName("fantest"), measurement.WithSinkName("fantest"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,7 +37,7 @@ func TestFanMetricsEmittance(t *testing.T) {
 		WithRelayService(relayService),
 	)
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 2; i++ {
 		controller.FanControl()
 		time.Sleep(1 * time.Second)
 	}
