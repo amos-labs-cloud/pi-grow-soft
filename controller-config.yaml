@@ -1,21 +1,21 @@
 relay:
-  one: 12
-  two: 16
+  one: 6
+  two: 5
   three: 20
-  four: 21
+  four: 1
 thSensor:
   pin: 4
-display:
-  rs: 17
-  e: 27
-  pins: [13, 6, 5, 22]
-  width: 16
+#display:
+#  rs: 17
+#  e: 27
+#  pins: [13, 6, 5, 22]
+#  width: 16
 lights:
-  relay: 1
-  onTime: 9:00AM
-  duration: 12h
-fans:
   relay: 2
+  onTime: 12:00PM
+  duration: 1m
+fans:
+  relay: 1
   triggerTempCelsius: 26
 water:
   lowRange: 400

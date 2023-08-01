@@ -30,8 +30,10 @@ func (c *Service) FanControl() {
 		return
 	}
 	if lastFanStateOff.IsZero() && !fansOn {
+		log.Info().Msg("setting lastLighStateOff to now")
 		lastLightStateOff = time.Now()
 	} else if lastFanStateOn.IsZero() && fansOn {
+		log.Info().Msg("setting lastFanStateOn to now")
 		lastLightStateOn = time.Now()
 	}
 

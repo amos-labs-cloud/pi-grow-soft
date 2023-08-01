@@ -31,8 +31,10 @@ func (c *Service) LightsControl() {
 	}
 
 	if lastLightStateOff.IsZero() && !lightsOn {
+		log.Info().Msg("setting lastLightStateOff to now")
 		lastLightStateOff = time.Now()
 	} else if lastLightStateOn.IsZero() && lightsOn {
+		log.Info().Msg("setting lastLightStateOn to now")
 		lastLightStateOn = time.Now()
 	}
 
