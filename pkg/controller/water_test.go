@@ -19,14 +19,14 @@ func TestWaterMetrics(t *testing.T) {
 
 	device := new(MockDevice)
 
-	sensorService := sensors.New(sensors.WithMoistureSensor(device))
+	sensorService := sensors.New(sensors.WithSensor(device))
 	controller := New(
 		WithMetricsService(metricsService),
 		WithSensorService(sensorService),
 	)
 
 	for i := 0; i < 2; i++ {
-		viper.Set("water.lowRange", 300)
+		viper.Set("moistureSensor.lowRange", 300)
 		device.Mock.On("ReadMoisture", mock.Anything).Return(func() float32 {
 			min := float32(1)
 			max := float32(1000)

@@ -13,11 +13,7 @@ var waterNeeded bool
 var waterNeededTimeStamp time.Time
 
 func (c *Service) WaterControl() {
-	soilSensor, err := c.Sensors.MoistureSensor()
-	if err != nil {
-		log.Error().Msgf("unable to get air sensor: %s", err)
-		return
-	}
+	soilSensor := c.Sensors.MoistureSensor()
 
 	capacitance, err := soilSensor.ReadMoisture(10)
 	if err != nil {
@@ -27,9 +23,10 @@ func (c *Service) WaterControl() {
 	log.Info().Msgf("capacitance: %.0f", capacitance)
 
 	prevWaterNeeded := waterNeeded
-	waterNeeded = viper.GetInt("water.lowRange") > int(capacitance)
+	lowRange := viper.GetInt("moistureSensor.lowRange")
+	waterNeeded = lowRange > int(capacitance)
 	if waterNeeded {
-		log.Info().Msgf("Water is needed capacitance is below threshold: %d current: %d", viper.GetInt("water.lowRange"), int(capacitance))
+		log.Info().Msgf("Water is needed capacitance is below threshold: %d current: %d", lowRange, int(capacitance))
 		// If water needed was set to false, we are about set it to true, so set the new timestamp
 		if !prevWaterNeeded {
 			log.Debug().Msg("Setting water timestamp")

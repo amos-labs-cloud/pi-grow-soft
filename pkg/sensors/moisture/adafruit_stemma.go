@@ -3,19 +3,14 @@ package moisture
 import (
 	"fmt"
 	"github.com/amos-labs-cloud/pi-grow-soft/pkg/display"
+	"github.com/amos-labs-cloud/pi-grow-soft/pkg/sensors"
 	"github.com/asssaf/stemma-soil-go/soil"
 	"github.com/rs/zerolog/log"
 	"periph.io/x/conn/v3/i2c/i2creg"
 	"periph.io/x/host/v3"
 )
 
-type MoistureSensorType uint
-
-const (
-	AdaSoilSensor MoistureSensorType = iota
-)
-
-type MoistureDevice struct {
+type AdafruitStemma struct {
 	lastCapacitance *float32
 	label           string
 	dev             *soil.Dev
@@ -24,15 +19,24 @@ type MoistureDevice struct {
 	devPath         string
 }
 
-type Sensor interface {
-	ReadMoisture(tries int) (float32, error)
+func NewAdafruitStemma(label string, devAddr uint16, devPath string) *AdafruitStemma {
+	return &AdafruitStemma{label: label, devAddr: devAddr, devPath: devPath}
 }
 
-func NewMoistureSensor(label string, devAddr uint16, devPath string) *MoistureDevice {
-	return &MoistureDevice{label: label, devAddr: devAddr, devPath: devPath}
+func (m *AdafruitStemma) Name() string {
+	return "dht11_temp_humidity_sensor"
 }
 
-func (m *MoistureDevice) ReadMoisture(tries int) (float32, error) {
+func (m *AdafruitStemma) SensorTypeInfo() sensors.SensorTypeInfo {
+	return sensors.SensorTypeInfo{
+		Category: sensors.Moisture,
+		Info: map[string]string{
+			"description": "Adafruit Stemma Soil Sensor",
+		},
+	}
+}
+
+func (m *AdafruitStemma) ReadMoisture(tries int) (float32, error) {
 	m.start()
 	values := soil.SensorValues{}
 	if err := m.dev.Sense(&values); err != nil {
@@ -45,7 +49,7 @@ func (m *MoistureDevice) ReadMoisture(tries int) (float32, error) {
 	return *m.lastCapacitance, nil
 }
 
-func (m *MoistureDevice) start() {
+func (m *AdafruitStemma) start() {
 	if _, err := host.Init(); err != nil {
 		panic(err)
 	}
@@ -72,14 +76,14 @@ func (m *MoistureDevice) start() {
 	m.dev = dev
 }
 
-func (m *MoistureDevice) stop() {
+func (m *AdafruitStemma) stop() {
 	err := m.closeFunc()
 	if err != nil {
 		log.Error().Msgf("unable to close rpio: %s", err)
 	}
 }
 
-func (m *MoistureDevice) DisplayView() display.Page {
+func (m *AdafruitStemma) DisplayView() display.Page {
 	var pages []string
 	log.Debug().Msgf("displayView: moisture sensor: %+v", m)
 	if m.lastCapacitance != nil {

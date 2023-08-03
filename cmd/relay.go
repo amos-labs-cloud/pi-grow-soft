@@ -42,14 +42,14 @@ to quickly create a Cobra application.`,
 }
 
 var (
-	relayNumber uint8
+	relayNumber int
 	on          bool
 	off         bool
 )
 
 func init() {
 	rootCmd.AddCommand(relayCmd)
-	relayCmd.Flags().Uint8VarP(&relayNumber, "number", "n", 0, "relay to execute on")
+	relayCmd.Flags().IntVarP(&relayNumber, "number", "n", 0, "relay to execute on")
 	relayCmd.Flags().BoolVarP(&on, "on", "o", false, "turn on relay")
 	relayCmd.Flags().BoolVarP(&off, "off", "f", false, "turn off relay")
 	relayCmd.MarkFlagsMutuallyExclusive("on", "off")

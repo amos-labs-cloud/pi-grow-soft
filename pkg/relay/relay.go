@@ -28,9 +28,10 @@ func (n Normality) String() string {
 
 type Relay struct {
 	Pin        pin.Pin
-	number     uint8
+	number     int
 	Normality  Normality
 	DeviceName string
+	DeviceTypeInfo
 }
 
 func (r *Relay) Name() string {
@@ -63,11 +64,16 @@ func (r *Relay) Off() {
 	}
 }
 
-func (r *Relay) Number() uint8 {
+func (r *Relay) Number() int {
 	return r.number
 }
 
 func (r *Relay) State() (bool, error) {
+	err := rpio.Open()
+	if err != nil {
+		return false, fmt.Errorf("unable to open rpio")
+	}
+	defer rpio.Close()
 	state := r.Pin.Read()
 	switch r.Normality {
 	case NormallyClosed:
@@ -84,7 +90,11 @@ func (r *Relay) State() (bool, error) {
 	return false, fmt.Errorf("how did you get to this state")
 }
 
-func NewRelay(deviceName string, pinNumber uint8, relayNumber uint8, normality Normality) *Relay {
-	log.Debug().Msgf("creating relay for device: %s with pinNumber %d, and normality: %s", deviceName, pinNumber, normality.String())
-	return &Relay{DeviceName: deviceName, Pin: *pin.NewPin(pinNumber), number: relayNumber, Normality: normality}
+func (r *Relay) TypeInfo() DeviceTypeInfo {
+	return r.DeviceTypeInfo
+}
+
+func NewRelay(deviceName string, pinNumber int, relayNumber int, normality Normality, category DeviceCategory) *Relay {
+	log.Debug().Msgf("creating relay for device: %s with pinNumber %d, and normality: %s deviceType: %s", deviceName, pinNumber, normality.String(), category)
+	return &Relay{DeviceName: deviceName, Pin: *pin.NewPin(pinNumber), number: relayNumber, Normality: normality, DeviceTypeInfo: DeviceTypeInfo{Category: category}}
 }

@@ -33,7 +33,7 @@ to quickly create a Cobra application.`,
 		}
 
 		for {
-			client.controllerService.FanControl()
+			//client.controllerService.FanControl()
 			client.controllerService.WaterControl()
 			client.controllerService.LightsControl()
 			time.Sleep(time.Second * 20)

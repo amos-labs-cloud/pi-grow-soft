@@ -13,13 +13,11 @@ var (
 )
 
 func (c *Service) LightsControl() {
-
 	lights := c.Relays.Lights()
-
-	onTime := viper.GetTime("lights.onTime")
+	onTime := viper.GetTime("devices.lights.onTime")
 	now := time.Now()
 	onTime = time.Date(now.Year(), now.Month(), now.Day(), onTime.Hour(), onTime.Minute(), onTime.Second(), onTime.Nanosecond(), time.Local)
-	onDuration := viper.GetDuration("lights.Duration")
+	onDuration := viper.GetDuration("devices.lights.Duration")
 	offTime := onTime.Add(onDuration)
 	prevOffTime := offTime.Add(time.Hour * -24)
 	log.Debug().Msgf("On Time: %s, duration: %s, offTime: %s previous offTime: %s", onTime.String(), onDuration.String(), offTime.String(), prevOffTime.String())

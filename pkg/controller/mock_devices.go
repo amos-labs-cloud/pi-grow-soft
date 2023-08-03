@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/amos-labs-cloud/pi-grow-soft/pkg/sensors"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -57,4 +58,9 @@ func (f *MockDevice) State() (bool, error) {
 		return false, fmt.Errorf("couldn't unpack mock state function call")
 	}
 	return fn()
+}
+
+func (f *MockDevice) SensorTypeInfo() sensors.SensorTypeInfo {
+	args := f.Called()
+	return args.Get(0).(sensors.SensorTypeInfo)
 }

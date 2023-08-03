@@ -41,13 +41,13 @@ to quickly create a Cobra application.`,
 }
 
 var (
-	pinNumber uint8
+	pinNumber int
 	signal    bool
 )
 
 func init() {
 	rootCmd.AddCommand(signalCommand)
-	signalCommand.Flags().Uint8VarP(&pinNumber, "number", "n", 0, "gpio pin to execute on")
+	signalCommand.Flags().IntVarP(&pinNumber, "number", "n", 0, "gpio pin to execute on")
 	signalCommand.Flags().BoolVarP(&signal, "signal", "s", false, "whether to send high")
 	signalCommand.MarkFlagsRequiredTogether("number", "signal")
 
