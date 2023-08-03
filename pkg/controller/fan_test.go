@@ -19,6 +19,7 @@ func TestFanMetricsEmittance(t *testing.T) {
 
 	device := new(MockDevice)
 	device.Mock.On("State").Return(func() (bool, error) { return true, nil })
+	device.Mock.On("TypeInfo").Return(relay.DeviceTypeInfo{Category: relay.Fans})
 
 	relayService := relay.New(relay.WithDevice(device))
 
@@ -29,6 +30,7 @@ func TestFanMetricsEmittance(t *testing.T) {
 			max := float32(35)
 			return min + rand.Float32()*(max-min), min + rand.Float32()*(max-min), nil
 		})
+	dht11.Mock.On("SensorTypeInfo").Return(sensors.SensorTypeInfo{Category: sensors.AirTempHumidity})
 
 	sensorService := sensors.New(sensors.WithSensor(dht11))
 	controller := New(

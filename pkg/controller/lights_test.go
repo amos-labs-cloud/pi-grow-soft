@@ -48,6 +48,7 @@ func TestLightMetricsEmittance(t *testing.T) {
 	device.Mock.On("Off").Return()
 	device.Mock.On("Off").Return()
 	device.Mock.On("On").Return()
+	device.Mock.On("TypeInfo").Return(relay.DeviceTypeInfo{Category: relay.Lights})
 
 	relayService := relay.New(relay.WithDevice(device))
 

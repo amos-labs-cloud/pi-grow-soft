@@ -58,8 +58,8 @@ func (f *MockDevice) SensorTypeInfo() sensors.SensorTypeInfo {
 	return args.Get(0).(sensors.SensorTypeInfo)
 }
 
-func (f *MockDevice) ReadTempHumidity(tries int) (float32, float32, error) {
-	args := f.Called(tries)
+func (f *MockDevice) ReadTempHumidity() (float32, float32, error) {
+	args := f.Called()
 	fn, ok := args.Get(0).(func() (float32, float32, error))
 	if !ok {
 		return 0, 0, fmt.Errorf("couldn't unpack mock temp humidity function call")

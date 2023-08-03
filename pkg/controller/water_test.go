@@ -18,6 +18,9 @@ func TestWaterMetrics(t *testing.T) {
 	}
 
 	device := new(MockDevice)
+	device.Mock.On("SensorTypeInfo").Return(sensors.SensorTypeInfo{
+		Category: sensors.Moisture,
+	})
 
 	sensorService := sensors.New(sensors.WithSensor(device))
 	controller := New(
