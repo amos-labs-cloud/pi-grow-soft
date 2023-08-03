@@ -1,13 +1,37 @@
 package relay
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Device interface {
 	Name() string
 	On()
 	Off()
 	State() (bool, error)
-	Number() uint8
+	Number() int
+	TypeInfo() DeviceTypeInfo
+}
+
+type DeviceTypeInfo struct {
+	Category DeviceCategory
+}
+
+type DeviceCategory int
+
+const (
+	Fans DeviceCategory = iota
+	Lights
+)
+
+func (d DeviceCategory) String() string {
+	switch d {
+	case Fans:
+		return "fans"
+	case Lights:
+		return "lights"
+	}
+	return "unknown"
 }
 
 type Signal uint8
@@ -18,12 +42,12 @@ const (
 )
 
 type Service struct {
-	fan    Device
-	lights Device
+	devices map[string]Device
 }
 
 func New(opts ...DeviceOpt) *Service {
-	s := Service{}
+	devices := make(map[string]Device)
+	s := Service{devices: devices}
 	for _, opt := range opts {
 		opt(&s)
 	}
@@ -32,20 +56,14 @@ func New(opts ...DeviceOpt) *Service {
 
 type DeviceOpt func(s *Service)
 
-func WithLightDevice(lights Device) DeviceOpt {
+func WithDevice(device Device) DeviceOpt {
 	return func(s *Service) {
-		s.lights = lights
-	}
-}
-
-func WithFanDevice(fan Device) DeviceOpt {
-	return func(s *Service) {
-		s.fan = fan
+		s.devices[device.TypeInfo().Category.String()] = device
 	}
 }
 
 func (s *Service) SetAllTo(signal Signal) {
-	for _, device := range []Device{s.fan, s.lights} {
+	for _, device := range s.devices {
 		switch signal {
 		case Off:
 			device.Off()
@@ -55,15 +73,12 @@ func (s *Service) SetAllTo(signal Signal) {
 	}
 }
 
-func (s *Service) LoadedDevices() []Device {
-	var devices []Device
-	devices = append(devices, s.fan)
-	devices = append(devices, s.lights)
-	return devices
+func (s *Service) Devices() map[string]Device {
+	return s.devices
 }
 
-func (s *Service) DeviceByRelay(number uint8) (Device, error) {
-	for _, device := range s.LoadedDevices() {
+func (s *Service) DeviceByRelay(number int) (Device, error) {
+	for _, device := range s.Devices() {
 		if device.Number() == number {
 			return device, nil
 		}
@@ -72,9 +87,9 @@ func (s *Service) DeviceByRelay(number uint8) (Device, error) {
 }
 
 func (s *Service) Fans() Device {
-	return s.fan
+	return s.devices[Fans.String()]
 }
 
 func (s *Service) Lights() Device {
-	return s.lights
+	return s.devices[Lights.String()]
 }

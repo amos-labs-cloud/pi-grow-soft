@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/hashicorp/go-metrics"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -21,17 +20,19 @@ func (c *Service) FanControl() {
 		return
 	}
 
-	triggerFanTemp := viper.GetInt("fans.triggerTempCelsius")
+	triggerFanTemp := viper.GetInt("devices.fans.triggerTempCelsius")
 	fans := c.Relays.Fans()
-~.	roundedTemp := int(math.Round(float64(temp)))
+	roundedTemp := int(math.Round(float64(temp)))
 	fansOn, err := fans.State()
 	if err != nil {
 		log.Error().Msgf("unable to get fan state: %s", err)
 		return
 	}
 	if lastFanStateOff.IsZero() && !fansOn {
+		log.Info().Msg("setting lastLightStateOff to now")
 		lastLightStateOff = time.Now()
 	} else if lastFanStateOn.IsZero() && fansOn {
+		log.Info().Msg("setting lastFanStateOn to now")
 		lastLightStateOn = time.Now()
 	}
 
@@ -77,14 +78,9 @@ func emitFanStateMetric(fansOn bool) {
 }
 
 func (c *Service) readTempHumidity() (float32, float32, error) {
-	airSensor, err := c.Sensors.AirTempSensor()
-	if err != nil {
-		// This is not an interesting metric because we are retrieving internal interfaces to then actually do something
-		log.Error().Msgf("unable to get air sensor: %s", err)
-		return 0, 0, fmt.Errorf("")
-	}
+	airSensor := c.Sensors.AirTempHumiditySensor()
 	tries := 10
-	temp, humidity, err := airSensor.ReadTempHumidity(tries)
+	temp, humidity, err := airSensor.ReadTempHumidity()
 	if err != nil {
 		// This is interesting, can maybe do a method that logs a message, gives you an error to return with that
 		// previous message, and submits a metric

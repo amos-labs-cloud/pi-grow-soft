@@ -12,34 +12,36 @@ import (
 
 func TestFanMetricsEmittance(t *testing.T) {
 
-	metricsService, err := measurement.New()
+	metricsService, err := measurement.New(measurement.WithNoWebServer(), measurement.WithServiceName("fantest"), measurement.WithSinkName("fantest"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	device := new(MockDevice)
 	device.Mock.On("State").Return(func() (bool, error) { return true, nil })
+	device.Mock.On("TypeInfo").Return(relay.DeviceTypeInfo{Category: relay.Fans})
 
-	relayService := relay.New(relay.WithFanDevice(device))
+	relayService := relay.New(relay.WithDevice(device))
 
-	dht11 := new(MockDHT11)
+	dht11 := new(MockDevice)
 	dht11.Mock.On("ReadTempHumidity", mock.Anything).Return(
 		func() (float32, float32, error) {
 			min := float32(23)
 			max := float32(35)
 			return min + rand.Float32()*(max-min), min + rand.Float32()*(max-min), nil
 		})
+	dht11.Mock.On("SensorTypeInfo").Return(sensors.SensorTypeInfo{Category: sensors.AirTempHumidity})
 
-	sensorService := sensors.New(sensors.WithAirSensor(dht11))
+	sensorService := sensors.New(sensors.WithSensor(dht11))
 	controller := New(
 		WithMetricsService(metricsService),
 		WithSensorService(sensorService),
 		WithRelayService(relayService),
 	)
 
-	for {
+	for i := 0; i < 2; i++ {
 		controller.FanControl()
-		time.Sleep(10 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 
 }

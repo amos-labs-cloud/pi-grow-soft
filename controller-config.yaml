@@ -1,22 +1,29 @@
 relay:
-  one: 12
-  two: 16
-  three: 20
-  four: 21
+  1: 6
+  2: 5
 thSensor:
+  enabled: true
   pin: 4
-display:
-  rs: 17
-  e: 27
-  pins: [13, 6, 5, 22]
-  width: 16
-lights:
-  relay: 1
-  onTime: 9:00AM
-  duration: 12h
-fans:
-  relay: 2
-  triggerTempCelsius: 26
-water:
+# 1602 Display Config
+#display:
+#  enabled: false
+#  type: lcd1602
+#  connectionInfo:
+#    rs: 17
+#    e: 27
+#    pins: [13, 6, 5, 22]
+#    width: 16
+devices:
+  lights:
+    enabled: true
+    relay: 2
+    onTime: 12:00PM
+    duration: 1m
+  fans:
+    enabled: true
+    relay: 1
+    triggerTempCelsius: 27
+moistureSensor:
+  enabled: true
   lowRange: 400
 metrics:

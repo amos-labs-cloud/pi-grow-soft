@@ -37,7 +37,7 @@ func TestService_LightsControl(t *testing.T) {
 }
 
 func TestLightMetricsEmittance(t *testing.T) {
-	metricsService, err := measurement.New()
+	metricsService, err := measurement.New(measurement.WithNoWebServer(), measurement.WithServiceName("lighttest"), measurement.WithSinkName("lighttest"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,20 +48,21 @@ func TestLightMetricsEmittance(t *testing.T) {
 	device.Mock.On("Off").Return()
 	device.Mock.On("Off").Return()
 	device.Mock.On("On").Return()
+	device.Mock.On("TypeInfo").Return(relay.DeviceTypeInfo{Category: relay.Lights})
 
-	relayService := relay.New(relay.WithLightDevice(device))
+	relayService := relay.New(relay.WithDevice(device))
 
 	controller := New(
 		WithMetricsService(metricsService),
 		WithRelayService(relayService),
 	)
 
-	for {
+	for i := 0; i < 2; i++ {
 		viper.Set("lights.OnTime", "10:00AM")
 		viper.Set("lights.Duration", "3h")
 		device.Mock.On("State").Return(func() (bool, error) { return false, nil })
 		controller.LightsControl()
-		time.Sleep(60 * time.Second)
+		time.Sleep(1 * time.Second)
 		viper.Set("lights.OnTime", "12:00PM")
 		viper.Set("lights.Duration", "3h")
 		controller.LightsControl()

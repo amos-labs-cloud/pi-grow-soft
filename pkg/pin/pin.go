@@ -12,11 +12,11 @@ type Pin struct {
 type Service struct {
 }
 
-func New(pins ...uint8) *Service {
+func New(pins ...int) *Service {
 	return &Service{}
 }
 
-func NewPin(pin uint8) *Pin {
+func NewPin(pin int) *Pin {
 	return &Pin{rpio.Pin(pin)}
 }
 

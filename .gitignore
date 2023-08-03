@@ -2,3 +2,4 @@ vendor
 .idea
 micro-grow*
 test_influxdb.env
+/pi-grow-soft
