@@ -1,6 +1,6 @@
 relay:
-  1: 6
-  2: 5
+  1: 5
+  2: 6
 thSensor:
   enabled: true
   pin: 4
@@ -17,8 +17,8 @@ devices:
   lights:
     enabled: true
     relay: 2
-    onTime: 12:00PM
-    duration: 1m
+    onTime: 6:00AM
+    duration: 18h
   fans:
     enabled: true
     relay: 1
@@ -26,4 +26,19 @@ devices:
 moistureSensor:
   enabled: true
   lowRange: 400
+moistureSensors:
+  1:
+    type:
+    enabled: true
+    address: 0x36
+    lowRange: 400
+  2:
+    enabled: true
+    address: 0x36
+    lowRange: 400
+  3:
+    enabled: true
+    address: 0x38
+    lowRange: 400
+  defaultLowRange: 400
 metrics:

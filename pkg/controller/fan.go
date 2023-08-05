@@ -11,9 +11,13 @@ import (
 var (
 	lastFanStateOff time.Time
 	lastFanStateOn  time.Time
+	shutOffTime     time.Time
 )
 
 func (c *Service) FanControl() {
+	if shutOffTime.IsZero() {
+		shutOffTime = time.Now()
+	}
 	temp, _, err := c.readTempHumidity()
 	if err != nil {
 		log.Warn().Msgf("unable to read air temp sensor: %s", err)
@@ -43,16 +47,22 @@ func (c *Service) FanControl() {
 			log.Info().Msgf("current temp: %d is greater than %d, turning on the fan", roundedTemp, triggerFanTemp)
 			fans.On()
 			fansOn = true
+			shutOffTime = time.Now().Add(time.Minute * 5)
+			log.Info().Msgf("set fan shutoff time to %+v", shutOffTime)
 			lastFanStateOn = time.Now()
 		}
 	}
 
 	if roundedTemp <= triggerFanTemp {
 		if fansOn {
-			log.Info().Msgf("current temp: %d is under %d, turning fan off", roundedTemp, triggerFanTemp)
-			fans.Off()
-			fansOn = false
-			lastFanStateOff = time.Now()
+			if time.Now().Before(shutOffTime) {
+				log.Info().Msgf("current temp: %d is under %d but we are still running the fans until %+v", roundedTemp, triggerFanTemp, shutOffTime)
+			} else {
+				log.Info().Msgf("current temp: %d is under or equal to %d, turning fan off", roundedTemp, triggerFanTemp)
+				fans.Off()
+				fansOn = false
+				lastFanStateOff = time.Now()
+			}
 		} else {
 			log.Info().Msgf("current temp: %d is under %d, not triggering fans", roundedTemp, triggerFanTemp)
 		}

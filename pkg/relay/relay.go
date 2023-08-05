@@ -27,7 +27,7 @@ func (n Normality) String() string {
 }
 
 type Relay struct {
-	Pin        pin.Pin
+	pin        pin.Pin
 	number     int
 	Normality  Normality
 	DeviceName string
@@ -41,13 +41,11 @@ func (r *Relay) Name() string {
 func (r *Relay) On() {
 	switch normality := r.Normality; normality {
 	case NormallyOpen:
-		log.Debug().Msgf("setting pin %+v to high", uint8(r.Pin.Pin))
-		r.Pin.Output()
-		r.Pin.High()
+		log.Debug().Msgf("setting pin %+v to high", uint8(r.pin.Pin))
+		r.pin.High()
 	case NormallyClosed:
-		log.Debug().Msgf("setting pin %+v to low", uint8(r.Pin.Pin))
-		r.Pin.Output()
-		r.Pin.Low()
+		log.Debug().Msgf("setting pin %+v to low", uint8(r.pin.Pin))
+		r.pin.Low()
 	default:
 	}
 }
@@ -55,11 +53,11 @@ func (r *Relay) On() {
 func (r *Relay) Off() {
 	switch normality := r.Normality; normality {
 	case NormallyOpen:
-		r.Pin.Output()
-		r.Pin.Low()
+		log.Debug().Msgf("setting pin %+v to low", uint8(r.pin.Pin))
+		r.pin.Low()
 	case NormallyClosed:
-		r.Pin.Output()
-		r.Pin.High()
+		log.Debug().Msgf("setting pin %+v to high", uint8(r.pin.Pin))
+		r.pin.High()
 	default:
 	}
 }
@@ -74,7 +72,7 @@ func (r *Relay) State() (bool, error) {
 		return false, fmt.Errorf("unable to open rpio")
 	}
 	defer rpio.Close()
-	state := r.Pin.Read()
+	state := r.pin.Read()
 	switch r.Normality {
 	case NormallyClosed:
 		if state == rpio.High {
@@ -96,5 +94,5 @@ func (r *Relay) TypeInfo() DeviceTypeInfo {
 
 func NewRelay(deviceName string, pinNumber int, relayNumber int, normality Normality, category DeviceCategory) *Relay {
 	log.Debug().Msgf("creating relay for device: %s with pinNumber %d, and normality: %s deviceType: %s", deviceName, pinNumber, normality.String(), category)
-	return &Relay{DeviceName: deviceName, Pin: *pin.NewPin(pinNumber), number: relayNumber, Normality: normality, DeviceTypeInfo: DeviceTypeInfo{Category: category}}
+	return &Relay{DeviceName: deviceName, pin: *pin.NewPin(pinNumber), number: relayNumber, Normality: normality, DeviceTypeInfo: DeviceTypeInfo{Category: category}}
 }
