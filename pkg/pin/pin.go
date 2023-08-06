@@ -24,7 +24,7 @@ func (p *Pin) High() {
 	log.Debug().Msgf("Setting %+v to high", p.Pin)
 	err := rpio.Open()
 	if err != nil {
-		log.Debug().Msgf("wonder how this happened??? %w", err)
+		log.Debug().Msgf("wonder how this happened??? %s", err)
 	}
 	defer rpio.Close()
 	p.Pin.Output()
@@ -36,7 +36,7 @@ func (p *Pin) Low() {
 	log.Debug().Msgf("Setting %+v to low", p.Pin)
 	err := rpio.Open()
 	if err != nil {
-		log.Debug().Msgf("wonder how this happened??? %w", err)
+		log.Debug().Msgf("wonder how this happened??? %s", err)
 	}
 	defer rpio.Close()
 	p.Pin.Output()
