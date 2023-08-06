@@ -74,12 +74,26 @@ func sensorsToLoad() []sensors.SensorOpt {
 		thSensorPin := viper.GetInt("thSensor.pin")
 		log.Info().Msgf("loading air temp humidity sensor on pin: %d", thSensorPin)
 		airTHSensor := dht11.NewDHT11(thSensorPin)
-		toLoad = append(toLoad, sensors.WithSensor(airTHSensor))
+		toLoad = append(toLoad, sensors.WithSensor(airTHSensor, 1))
 	}
-	if viper.GetBool("moistureSensor.enabled") {
-		log.Info().Msgf("loading soil moisture sensor")
-		soilSensor := moisture.NewAdafruitStemma("soil", 0x36, "/dev/i2c-1")
-		toLoad = append(toLoad, sensors.WithSensor(soilSensor))
+
+	if viper.GetBool("moistureSensors.enabled") {
+		log.Info().Msgf("loading soil moisture sensor(s)")
+		for i := 1; i < 4; i++ { // TODO: we can only have three sensors at the moment, hard code to move forward
+			sensorConfig := viper.Sub(fmt.Sprintf("moistureSensors.%d", i))
+			if sensorConfig == nil {
+				log.Info().Msgf("not loading moisture sensor: %d, unable to get subkey config", i)
+				continue
+			}
+			var sc moisture.StemmaConfig
+			err := sensorConfig.Unmarshal(&sc)
+			if err != nil {
+				log.Info().Msgf("not loading moisture sensor: %d, unable to get read config in config struct: %s", i, err)
+			}
+			log.Info().Msgf("loading soil sensor at address %d", sc.Address)
+			soilSensor := moisture.NewAdafruitStemma("soil", "/dev/i2c-1", sc)
+			toLoad = append(toLoad, sensors.WithSensor(soilSensor, i))
+		}
 	}
 	return toLoad
 }

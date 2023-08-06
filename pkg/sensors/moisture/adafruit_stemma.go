@@ -15,12 +15,17 @@ type AdafruitStemma struct {
 	label           string
 	dev             *soil.Dev
 	closeFunc       func() error
-	devAddr         uint16
+	devAddr         int
 	devPath         string
 }
 
-func NewAdafruitStemma(label string, devAddr uint16, devPath string) *AdafruitStemma {
-	return &AdafruitStemma{label: label, devAddr: devAddr, devPath: devPath}
+type StemmaConfig struct {
+	Enabled bool `mapstructure:"enabled"`
+	Address int  `mapstructure:"address"`
+}
+
+func NewAdafruitStemma(label string, devPath string, config StemmaConfig) *AdafruitStemma {
+	return &AdafruitStemma{label: label, devAddr: config.Address, devPath: devPath}
 }
 
 func (m *AdafruitStemma) Name() string {
@@ -64,7 +69,7 @@ func (m *AdafruitStemma) start() {
 		if m.devAddr < 0x36 || m.devAddr > 0x39 {
 			panic(fmt.Sprintf("given address not supported by device: %x", m.devAddr))
 		}
-		opts.Addr = m.devAddr
+		opts.Addr = uint16(m.devAddr)
 	}
 
 	dev, err := soil.NewI2C(i2cPort, &opts)
