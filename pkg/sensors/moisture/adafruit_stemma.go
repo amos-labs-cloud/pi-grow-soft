@@ -24,7 +24,7 @@ func NewAdafruitStemma(label string, devAddr uint16, devPath string) *AdafruitSt
 }
 
 func (m *AdafruitStemma) Name() string {
-	return "dht11_temp_humidity_sensor"
+	return "stemma_soil_sensor"
 }
 
 func (m *AdafruitStemma) SensorTypeInfo() sensors.SensorTypeInfo {
