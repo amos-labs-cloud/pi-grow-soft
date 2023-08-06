@@ -31,7 +31,6 @@ devices:
 #  lowRange: 400
 moistureSensors:
   enabled: true
-  defaultLowRange: 400
   1:
     type:
     enabled: true
