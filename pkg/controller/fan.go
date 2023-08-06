@@ -88,7 +88,7 @@ func emitFanStateMetric(fansOn bool) {
 }
 
 func (c *Service) readTempHumidity() (float32, float32, error) {
-	airSensor := c.Sensors.AirTempHumiditySensor()
+	airSensor := c.Sensors.AirTempHumiditySensors()[1] // TODO: Hardcoded for now, we only support one, different to resolve
 	tries := 10
 	temp, humidity, err := airSensor.ReadTempHumidity()
 	if err != nil {

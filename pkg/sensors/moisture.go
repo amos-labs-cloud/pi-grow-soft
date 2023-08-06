@@ -6,6 +6,12 @@ const (
 	AdaSoilSensor MoistureSensorType = iota
 )
 
+type Config struct {
+	Enabled         bool                   `mapstructure:"enabled"`
+	DefaultLowRange int                    `mapstructure:"defaultLowRange"`
+	SensorMapping   map[string]interface{} `mapstructure:"sensorMapping"`
+}
+
 func (m MoistureSensorType) String() string {
 	switch m {
 	case AdaSoilSensor:
