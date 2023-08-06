@@ -32,7 +32,7 @@ func TestFanMetricsEmittance(t *testing.T) {
 		})
 	dht11.Mock.On("SensorTypeInfo").Return(sensors.SensorTypeInfo{Category: sensors.AirTempHumidity})
 
-	sensorService := sensors.New(sensors.WithSensor(dht11))
+	sensorService := sensors.New(sensors.WithSensor(dht11, 1))
 	controller := New(
 		WithMetricsService(metricsService),
 		WithSensorService(sensorService),

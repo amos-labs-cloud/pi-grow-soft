@@ -22,7 +22,7 @@ func TestWaterMetrics(t *testing.T) {
 		Category: sensors.Moisture,
 	})
 
-	sensorService := sensors.New(sensors.WithSensor(device))
+	sensorService := sensors.New(sensors.WithSensor(device, 1))
 	controller := New(
 		WithMetricsService(metricsService),
 		WithSensorService(sensorService),
