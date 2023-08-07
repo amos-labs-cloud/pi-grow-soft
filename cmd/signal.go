@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/amos-labs-cloud/pi-grow-soft/pkg/pin"
 	"github.com/rs/zerolog/log"
-	"github.com/stianeikeland/go-rpio/v4"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -20,16 +19,6 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := rpio.Open()
-		if err != nil {
-			cmd.PrintErrf("unable to open gpio: %s", err)
-		}
-		defer func() {
-			err := rpio.Close()
-			if err != nil {
-				cmd.PrintErrf("unable to close gpio: %s", err)
-			}
-		}()
 		thePin := pin.NewPin(pinNumber)
 		log.Debug().Msgf("signal is: %t", signal)
 		if signal {

@@ -27,9 +27,6 @@ devices:
     enabled: true
     relay: 1
     triggerTempCelsius: 27
-#moistureSensor:
-#  enabled: true
-#  lowRange: 400
 moistureSensors:
   enabled: true
   1:

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/stianeikeland/go-rpio/v4"
 	"os"
 )
 
@@ -17,17 +16,6 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := rpio.Open()
-		if err != nil {
-			cmd.PrintErr("unable to open rpio: %w", err)
-			os.Exit(1)
-		}
-		defer func() {
-			err := rpio.Close()
-			if err != nil {
-				cmd.Println("failed to close rpio.Close: %w", err)
-			}
-		}()
 		device, err := client.controllerService.Relays.DeviceByRelay(relayNumber)
 		if err != nil {
 			cmd.PrintErr("unable to find relay: %w", err)
