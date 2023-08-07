@@ -27,9 +27,9 @@ func (p *Pin) High() {
 		log.Debug().Msgf("wonder how this happened??? %s", err)
 	}
 	defer func() {
-		err := rpio.Close()
-		if err != nil {
-			log.Debug().Msgf("ran into this err: %s closing rpio")
+		err2 := rpio.Close()
+		if err2 != nil {
+			log.Debug().Msgf("ran into this err: %s closing rpio", err2)
 		}
 	}()
 	p.Pin.Output()
@@ -44,9 +44,9 @@ func (p *Pin) Low() {
 		log.Debug().Msgf("wonder how this happened??? %s", err)
 	}
 	defer func() {
-		err := rpio.Close()
-		if err != nil {
-			log.Debug().Msgf("ran into this err: %s closing rpio")
+		err2 := rpio.Close()
+		if err2 != nil {
+			log.Debug().Msgf("ran into this err: %s closing rpio", err2)
 		}
 	}()
 	p.Pin.Output()
