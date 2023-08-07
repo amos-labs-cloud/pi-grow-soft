@@ -90,7 +90,7 @@ func sensorsToLoad() []sensors.SensorOpt {
 			if err != nil {
 				log.Info().Msgf("not loading moisture sensor: %d, unable to get read config in config struct: %s", i, err)
 			}
-			log.Info().Msgf("loading soil sensor at address %d", sc.Address)
+			log.Debug().Msgf("loading soil sensor at address 0x%x", sc.Address)
 			soilSensor := moisture.NewAdafruitStemma("soil", "/dev/i2c-1", sc)
 			toLoad = append(toLoad, sensors.WithSensor(soilSensor, i))
 		}

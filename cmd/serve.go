@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/stianeikeland/go-rpio/v4"
 	"os"
 	osSignal "os/signal"
@@ -33,10 +35,23 @@ to quickly create a Cobra application.`,
 		}
 
 		for {
-			client.controllerService.FanControl()
-			client.controllerService.WaterControl()
-			client.controllerService.LightsControl()
-			time.Sleep(time.Second * 20)
+			if viper.GetBool("devices.fans.enabled") && viper.GetBool("thSensor.enabled") {
+				client.controllerService.FanControl()
+			} else {
+				log.Info().Msg("fans or temp humidity sensor are not enabled, skipping fan control")
+			}
+			if viper.GetBool("devices.lights.enabled") {
+				client.controllerService.LightsControl()
+			} else {
+				log.Info().Msg("lights are not enabled, skipping light control")
+			}
+			ms := client.controllerService.Sensors.MoistureSensors()
+			if viper.GetBool("moistureSensors.enabled") && len(ms) >= 1 {
+				client.controllerService.WaterControl()
+			} else {
+				log.Info().Msg("moisture sensors are not enabled, or none are loaded, skipping water control")
+			}
+			time.Sleep(viper.GetDuration("controller.checkPeriod"))
 		}
 	},
 }

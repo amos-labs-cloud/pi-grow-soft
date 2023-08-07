@@ -20,7 +20,7 @@ func (c *Service) LightsControl() {
 	onDuration := viper.GetDuration("devices.lights.Duration")
 	offTime := onTime.Add(onDuration)
 	prevOffTime := offTime.Add(time.Hour * -24)
-	log.Debug().Msgf("On Time: %s, duration: %s, offTime: %s previous offTime: %s", onTime.String(), onDuration.String(), offTime.String(), prevOffTime.String())
+	log.Debug().Msgf("lights on time: %s, duration: %s, offTime: %s previous offTime: %s", onTime.String(), onDuration.String(), offTime.String(), prevOffTime.String())
 	lightsOn, err := lights.State()
 	if err != nil {
 		metrics.IncrCounter([]string{"relay_light_state_error"}, 1)
@@ -29,16 +29,16 @@ func (c *Service) LightsControl() {
 	}
 
 	if lastLightStateOff.IsZero() && !lightsOn {
-		log.Info().Msg("setting lastLightStateOff to now")
+		log.Debug().Msg("setting lastLightStateOff to now")
 		lastLightStateOff = time.Now()
 	} else if lastLightStateOn.IsZero() && lightsOn {
-		log.Info().Msg("setting lastLightStateOn to now")
+		log.Debug().Msg("setting lastLightStateOn to now")
 		lastLightStateOn = time.Now()
 	}
 
 	if now.After(onTime) && now.Before(offTime) {
 		if lightsOn {
-			log.Info().Msg("Lights are already on, we are between on and off time not doing anything")
+			log.Debug().Msg("Lights are already on, we are between on and off time not doing anything")
 		} else {
 			log.Info().Msg("Turning on lights, we are between the on and off time")
 			lights.On()
