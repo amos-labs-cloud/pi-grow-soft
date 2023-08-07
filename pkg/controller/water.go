@@ -30,7 +30,6 @@ func (mi moistureInfo) isEmpty() bool {
 
 func (c *Service) WaterControl() {
 	mSensors := c.Sensors.MoistureSensors()
-	log.Debug().Msgf("controller: loaded the following moisture sensors: %+v", mSensors)
 	// Init the tracker if it hasn't been yet
 	if moistureTracker == nil {
 		moistureTracker = make(map[int]moistureInfo)
@@ -43,15 +42,13 @@ func (c *Service) WaterControl() {
 		}
 	}
 
-	log.Debug().Msgf("moistureTracker: %+v", moistureTracker)
-
 	for i, mInfo := range moistureTracker {
 		capacitance, err := mInfo.sensor.ReadMoisture(10)
 		if err != nil {
 			metrics.IncrCounter([]string{"moisture_read_error_" + strconv.Itoa(i)}, 1)
 			log.Warn().Msgf("unable to read moisture on sensor: %d, err: %s", i, err)
 		}
-		log.Info().Msgf("sensor %d: capacitance: %.0f", i, capacitance)
+		log.Debug().Msgf("sensor %d: capacitance: %.0f", i, capacitance)
 
 		prevWaterNeeded := mInfo.waterNeeded
 		lowRange := viper.GetInt("controller.moisture.lowRange")
@@ -65,8 +62,6 @@ func (c *Service) WaterControl() {
 			}
 			log.Debug().Msgf("sensor: %d setting water needed to true", i)
 			metrics.SetGauge([]string{"last_water_needed_timestamp_seconds_" + strconv.Itoa(i)}, float32(waterNeededTimeStamp.Unix()))
-		} else {
-			log.Debug().Msgf("sensor: %d waterNeeded is false", i)
 		}
 
 		emitCapacitanceMetric(i, capacitance)

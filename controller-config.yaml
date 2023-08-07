@@ -2,6 +2,7 @@ relay:
   1: 5
   2: 6
 controller:
+  checkPeriod: 20s
   moisture:
     lowRange: 400
 thSensor:
