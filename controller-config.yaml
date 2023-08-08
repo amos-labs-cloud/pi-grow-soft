@@ -2,7 +2,8 @@ relay:
   1: 5
   2: 6
 controller:
-  checkPeriod: 20s
+  checkPeriod: 1m
+  defaultFanPeriod: 10m
   moisture:
     lowRange: 400
 thSensor:
