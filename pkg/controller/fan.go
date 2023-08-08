@@ -47,7 +47,7 @@ func (c *Service) FanControl() {
 			log.Info().Msgf("current temp: %d is greater than %d, turning on the fan", roundedTemp, triggerFanTemp)
 			fans.On()
 			fansOn = true
-			shutOffTime = time.Now().Add(time.Minute * 5)
+			shutOffTime = time.Now().Add(viper.GetDuration("controller.defaultFanPeriod"))
 			log.Info().Msgf("set fan shutoff time to %+v", shutOffTime)
 			lastFanStateOn = time.Now()
 		}
